@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html><head>
+  <h3>Jenna Landy, jpl323</h3>
+  
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  </head>
+  <body>
+
+
+
+    <p id="p1">
+      <b>Problem 1 SVGs:</b><br>
+  
+      <div><svg id = "first" height=400 width=400 ></svg></div>
+      <div><svg id = "second" height=400 width=400 ></svg></div>
+      <div><svg id = "third" height=400 width=400 ></svg></div>
+
+      <script>
+      
+      let svg1 = d3.select("svg#first");
+      const svg1width = svg1.attr('width');
+      const svg1height = svg1.attr('height');
+      const svg1margins = {top: 5, right: 5, bottom: 0, left: 0};
+      const svg1chartWidth = svg1width - svg1margins.left - svg1margins.right;
+      const svg1chartHeight = svg1height - svg1margins.top - svg1margins.bottom;
+      
+      d3.json('/diamonds.json').then( (data) => {
+
+
+        let maxCarat = d3.extent(data, d=>d['carat'])[1]
+
+        let maxPrice = d3.extent(data, d=>d['price'])[1]
+      
+        let caratScale = d3.scaleLinear()
+                         .domain([0,maxCarat])
+                         .range([0,svg1chartWidth]);
+      
+        let priceScale = d3.scaleLinear()
+                         .domain([0,maxPrice])
+                         .range([svg1height,svg1margins.top]);
+
+      // Vertical carat gridlines
+      for (let i = 0; i <= maxCarat; i+=1) {
+        svg1.append("line")
+            .attr("x1",caratScale(i))
+            .attr("x2",caratScale(i))
+            .attr("y1",0)
+            .attr("y2",svg1height) 
+            .style("stroke", "#BEBEBE")
+            .style("stroke-width", 1);
+    };  
+ 
+    // Horizontal price gridlines
+    for (let i = 0; i <= maxPrice; i+=1000) {
+        svg1.append("line")
+            .attr("x1",0)
+            .attr("x2",svg1width)
+            .attr("y1",priceScale(i))
+            .attr("y2",priceScale(i)) 
+            .style("stroke", "#BEBEBE")
+            .style("stroke-width", 1);
+    };  
+    
+      data.forEach( (d, i) => {
+        svg1.append("circle")
+            .attr("cx", Math.floor((caratScale(d.carat))))
+            .attr("cy",Math.floor((priceScale(d.price))))
+            .attr("r", 3)
+            .attr("opacity", .4)
+            .style("fill", "#00008B")
+    });})
+
+
+    // SECOND SVG
+
+    let svg2 = d3.select("svg#second");
+    const svg2width = svg2.attr('width');
+    const svg2height = svg2.attr('height');
+    const svg2margins = {top: 5, right: 0, bottom: 0, left: 0};
+    const svg2chartWidth = svg2width - svg2margins.left - svg2margins.right;
+    const svg2chartHeight = svg2height - svg2margins.top - svg2margins.bottom;
+      
+      d3.json('/diamonds.json').then( (data) => {
+
+
+        let maxColRating = d3.extent(data, d=>d['color_rating'])[1]
+
+        let maxPrice = d3.extent(data, d=>d['price'])[1]
+      
+        let colRatingScale = d3.scaleLinear()
+                         .domain([0,8])
+                         .range([0,svg2chartWidth]);
+      
+        let priceScale = d3.scaleLinear()
+                         .domain([0,maxPrice])
+                         .range([svg2height,svg2margins.top]);
+
+      // Vertical color rating gridlines
+      for (let i = 0; i <= 7; i+=1) {
+        svg2.append("line")
+            .attr("x1",colRatingScale(i))
+            .attr("x2",colRatingScale(i))
+            .attr("y1",0)
+            .attr("y2",svg2height) 
+            .style("stroke", "#BEBEBE")
+            .style("stroke-width", 1);
+    };  
+ 
+    // Horizontal price gridlines
+    for (let i = 0; i <= maxPrice; i+=1000) {
+        svg2.append("line")
+            .attr("x1",0)
+            .attr("x2",svg2width)
+            .attr("y1",priceScale(i))
+            .attr("y2",priceScale(i)) 
+            .style("stroke", "#BEBEBE")
+            .style("stroke-width", 1);
+    };  
+    
+      data.forEach( (d, i) => {
+        svg2.append("circle")
+            .attr("cx", Math.floor(((Math.random()*10)-5)+(colRatingScale(d.color_rating))))
+            .attr("cy",Math.floor((priceScale(d.price))))
+            .attr("r", 3)
+            .attr("opacity", .3)
+            .style("fill", "#006400")
+});})
+
+    // THIRD SVG
+
+    let svg3 = d3.select("svg#third");
+    const svg3width = svg3.attr('width');
+    const svg3height = svg3.attr('height');
+    const svg3margins = {top: 5, right: 0, bottom: 0, left: 0};
+    const svg3chartWidth = svg3width - svg3margins.left - svg3margins.right;
+    const svg3chartHeight = svg3height - svg3margins.top - svg3margins.bottom;
+      
+      d3.json('/diamonds.json').then( (data) => {
+
+
+        let maxColRating = d3.extent(data, d=>d['color_rating'])[1]
+
+        let ppc = [];
+
+        data.forEach( (d, data) => {
+          let pricePerCarat = d['price']/d['carat']
+          ppc.push(pricePerCarat);
+        });
+
+        let maxPPC = 0;
+        for(let i = 0; i <= ppc.length; i+=1)
+        {
+          if (ppc[i]>maxPPC)
+          {
+            maxPPC = ppc[i]
+          }
+        }
+
+      
+        let colRatingScale = d3.scaleLinear()
+                         .domain([0,8])
+                         .range([0,svg3chartWidth]);
+      
+        let ppcScale = d3.scaleLinear()
+                         .domain([0,maxPPC])
+                         .range([svg3height,svg3margins.top]);
+
+      // Vertical color rating gridlines
+      for (let i = 0; i <= 7; i+=1) {
+        svg3.append("line")
+            .attr("x1",colRatingScale(i))
+            .attr("x2",colRatingScale(i))
+            .attr("y1",0)
+            .attr("y2",svg3height) 
+            .style("stroke", "#BEBEBE")
+            .style("stroke-width", 1);
+    };  
+ 
+    // Horizontal ppc gridlines
+    for (let i = 0; i <= maxPPC; i+=1000) {
+        svg3.append("line")
+            .attr("x1",0)
+            .attr("x2",svg3width)
+            .attr("y1",ppcScale(i))
+            .attr("y2",ppcScale(i)) 
+            .style("stroke", "#BEBEBE")
+            .style("stroke-width", 1);
+    };  
+    
+      data.forEach( (d, i) => {
+        svg3.append("circle")
+            .attr("cx", Math.floor(((Math.random()*10)-5)+(colRatingScale(d.color_rating))))
+            .attr("cy",Math.floor((ppcScale(ppc[i]))))
+            .attr("r", 3)
+            .attr("opacity", .3)
+            .style("fill", "#8b0000")
+});
+})
+
+  </script>
+
+<br>
+<b>
+Prompt:
+<br>
+This view suggests a (false) relationship between price per carat and quality. 
+<br>Discuss why this chart might mislead a viewer into seeing a pattern that isn’t present.
+</b>
+<br>
+<br>
+Response:
+<br>
+The peaks of this chart come into focus, as the highest points in each column.
+Following these peaks with the eye suggests a linear decline in the data.
+However, it would be more accurate to look at the density of the dots, and not just where the highest dot lies in each column.
+This way of looking is less intuitive based on the column-feel of this chart, but (appropriately) it does not suggest any linear decline. 
+By highlighting high outliers, this chart suggests a false relationship.
+      
+    </p>
+
+
+<p id="p2">
+  <br><br><b>Problem 2 SVG:</b><br><br>
+  
+      <svg id = "fourth" height=500 width=500 style="background-color:black"></svg>
+      <script>
+        let svg4 = d3.select("svg#fourth");
+        d3.csv('/NCAA_shots.csv').then( (data) => {
+
+
+        data.forEach( (d, i) => {
+
+          d['x']*=5;
+          d['y']*=5;
+          d['width']*=5;
+          d['height']*=5;
+
+    });
+
+    let attemptExt = d3.extent(data, d=>d['log_attempt'])[1]
+
+    let seqColorScale = d3.scaleSequential(d3.interpolateViridis)
+                          .domain([0, attemptExt]);
+
+      data.forEach( (d, i) => {
+
+        svg4.append("rect")
+          .attr("x", d['x'])
+          .attr("y", d['y'])
+          .attr("width", d['width'])
+          .attr("height", d['height'])
+          .style("fill", seqColorScale(d['log_attempt']))
+
+      });
+
+
+        });
+      </script>
+
+      <br>
+      <br>
+      <b>
+      Prompt:
+      <br>
+      Compare that result with your previous visualization. 
+      <br>In 2-3 sentences, describe one advantage and one disadvantage of the logarithmic color scale as compared to the linear scale.
+      </b>
+      <br>
+      <br>
+      Response:
+      <br>
+      One advantage of the logarithmic color scale (as compared to the linear scale) is its visual distinctiveness.
+      It is much easier to spot small differences in the visualization with this more graduated color scheme which highlights minor differences.
+      One disadvantage of the logarithmic color scale is that it makes less logical sense to a chart reader within the context of the topic; 
+      in other words, a human can understand what an "attempt" is, and process that information normally, but as people do not think in terms of logarithms,
+      it will be harder for a human to truly comprehend what the visualization is showing us when shown logarithmically.
+
+</p>
